@@ -14,7 +14,6 @@ process.on( 'unhandledRejection', ( err ) => {
  */
 /* eslint-disable-next-line jest/no-jest-import */
 const jest = require( 'jest' );
-const playwright = require('playwright');
 const { sync: spawn } = require( 'cross-spawn' );
 
 /**
@@ -44,7 +43,7 @@ if (
 	! hasProjectFile( 'jest-puppeteer.config.js' ) &&
 	! process.env.JEST_PUPPETEER_CONFIG
 ) {
-	// process.env.JEST_PUPPETEER_CONFIG = fromConfigRoot( 'puppeteer.config.js' );
+	process.env.JEST_PUPPETEER_CONFIG = fromConfigRoot( 'puppeteer.config.js' );
 }
 
 const configFile = getJestOverrideConfigFile( 'e2e' );
@@ -80,4 +79,4 @@ Object.entries( configsMapping ).forEach( ( [ envKey, argName ] ) => {
 
 const cleanUpPrefixes = [ '--puppeteer-', '--wordpress-' ];
 
-playwright.run( [ ...config, ...runInBand, ...getArgsFromCLI( cleanUpPrefixes ) ] );
+jest.run( [ ...config, ...runInBand, ...getArgsFromCLI( cleanUpPrefixes ) ] );

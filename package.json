@@ -29,7 +29,7 @@
 		"@wordpress/dependency-extraction-webpack-plugin": "3.2.1",
 		"@wordpress/e2e-test-utils": "5.4.10",
 		"@wordpress/library-export-default-webpack-plugin": "2.2.0",
-		"@wordpress/scripts": "file:../packages/scripts",
+		"@wordpress/scripts": "file:../packages/scripts/packages/scripts",
 		"autoprefixer": "^9.8.8",
 		"chalk": "4.1.2",
 		"check-node-version": "4.1.0",
