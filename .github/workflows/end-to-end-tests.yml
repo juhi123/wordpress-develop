@@ -8,9 +8,9 @@ on:
       - '5.[3-9]'
       - '[6-9].[0-9]'
       - 'add/playwright-e2e-util-package'
-    # tags:
-    #   - '5.[3-9]*'
-    #   - '[6-9].[0-9]*'
+    tags:
+      - '5.[3-9]*'
+      - '[6-9].[0-9]*'
   pull_request:
     branches:
       - trunk
@@ -49,7 +49,7 @@ jobs:
     name: E2E Tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    if: ${{ github.repository == 'WordPress/wordpress-develop' || github.event_name == 'pull_request' }}
+    # if: ${{ github.repository == 'WordPress/wordpress-develop' || github.event_name == 'pull_request' }}
 
     steps:
       - name: Configure environment variables
