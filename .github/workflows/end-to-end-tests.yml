@@ -7,7 +7,7 @@ on:
       - trunk
       - '5.[3-9]'
       - '[6-9].[0-9]'
-      - 'gitadd/playwright-e2e-util-package'
+      - 'add/playwright-e2e-util-package'
     tags:
       - '5.[3-9]*'
       - '[6-9].[0-9]*'
