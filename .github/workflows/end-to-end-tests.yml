@@ -78,7 +78,7 @@ jobs:
           cache: npm
 
       - name: Install Dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build WordPress
         run: npm run build
@@ -110,9 +110,6 @@ jobs:
 
       - name: Install WordPress
         run: npm run env:install
-
-      - name: Install Dependecies
-        run: npm install
 
       - name: Run E2E tests
         run: npm run test:e2e
