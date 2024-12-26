@@ -1,16 +1,11 @@
 /**
  * WordPress dependencies
  */
-const { test, expect } = require("@wordpress/e2e-test-utils-playwright");
+const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
 
-test.describe("Bulk @wp-post Edit", () => {
-  
-
-  test.beforeEach(async ({ admin, editor }) => {
-    // await admin.createNewPost({ title: postTitle });
-    // await editor.publishPost();
-
-    // create Posts to use in test
+test.describe( 'Bulk @wp-post Edit', () => {
+	test.beforeEach( async ( { admin, editor } ) => {
+		// create Posts to use in test
 		const postTitles = [
 			'Test Post for bulk edit 1',
 			'Test Post for bulk edit 2',
@@ -20,18 +15,23 @@ test.describe("Bulk @wp-post Edit", () => {
 			await admin.createNewPost( { title: title } );
 			await editor.publishPost();
 		}
-  });
+	} );
 
-  test.afterEach(async ({ requestUtils }) => {
-    await requestUtils.deleteAllPosts();
-  });
+	test.afterEach( async ( { requestUtils } ) => {
+		await requestUtils.deleteAllPosts();
+	} );
 
-  test("Should be able to edit the posts in bulk", async ({ page, admin }) => {
-    // Navigate to posts page
-    await admin.visitAdminPage('/edit.php');
-    await expect(page.locator('.wp-heading-inline')).toHaveText('Posts');
+	test( 'Should be able to edit the posts in bulk', async ( {
+		page,
+		admin,
+	} ) => {
+		// Navigate to posts page
+		await admin.visitAdminPage( '/edit.php' );
+		await expect( page.locator( '.wp-heading-inline' ) ).toHaveText(
+			'Posts'
+		);
 
-   // click on select all checkbox
+		// click on select all checkbox
 		await page.locator( '#cb-select-all-1' ).click();
 
 		// select the edit option from the dropdown
@@ -59,8 +59,5 @@ test.describe("Bulk @wp-post Edit", () => {
 
 		// Validate that the page is in draft status
 		await expect( posts.first() ).toHaveText( 'Draft' );
-
-    // // Assert success message
-    // await expect(page.locator("div[id='message'] p").first(), "Bulk edit success message not displayed").toHaveText(/posts updated./);
-  });
-});
+	} );
+} );
