@@ -5,10 +5,10 @@ const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
 
 test.describe( 'Save Page', () => {
 	test.beforeEach( async ( { admin, editor } ) => {
-		// create Posts to use in test
-		const postTitle = 'Test Page for draft';
+		// create Page to use in test
+		const pageTitle = 'Test Page for draft';
 
-		await admin.createNewPost( { title: postTitle, postType: 'page' } );
+		await admin.createNewPost( { title: pageTitle, postType: 'page' } );
 	} );
 
 	test.afterEach( async ( { requestUtils } ) => {
