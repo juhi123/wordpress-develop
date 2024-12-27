@@ -11,8 +11,8 @@ test.describe( 'Save Page', () => {
 		await admin.createNewPost( { title: pageTitle, postType: 'page' } );
 	} );
 
-	test.afterEach( async ( { requestUtils } ) => {
-		await requestUtils.deleteAllPosts();
+	test.afterAll( async ( { requestUtils } ) => {
+		await requestUtils.deleteAllPages();
 	} );
     
 	test( 'saves the page as drafts', async ( { page, admin } ) => {
