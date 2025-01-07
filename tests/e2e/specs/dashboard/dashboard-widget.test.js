@@ -10,11 +10,7 @@ test.describe( 'Dashboard widget management', () => {
 	 * @param {object} page - Playwright's page object.
 	 * @param {boolean} checkedStatus - Whether the checkbox should be checked
 	 */
-	async function validateWidgetVisibility(
-		page,
-		checkedStatus
-	) {
-
+	async function validateWidgetVisibility( page, checkedStatus ) {
 		const checkboxes = page.locator(
 			`${ '.metabox-prefs-container' } input[type="checkbox"]`
 		);
@@ -60,70 +56,68 @@ test.describe( 'Dashboard widget management', () => {
 		await screenOptionsTab.click();
 	}
 
-
 	/**
- * Moves a widget up or down and verifies the movement.
- *
- * @param {Page} page - The Playwright page object.
- * @param {string} direction - The direction to move the widget ("up" or "down").
- */
-	async function moveWidget(page, direction) {
+	 * Moves a widget up or down and verifies the movement.
+	 *
+	 * @param {Page} page - The Playwright page object.
+	 * @param {string} direction - The direction to move the widget ("up" or "down").
+	 */
+	async function moveWidget( page, direction ) {
 		const widgetSelector = '#dashboard_right_now';
 		const buttonSelector = direction === 'down' ? 'Move down' : 'Move up';
-	  
-		const button = page.locator(widgetSelector).getByRole('button', { name: buttonSelector });
-	  
+
+		const button = page
+			.locator( widgetSelector )
+			.getByRole( 'button', { name: buttonSelector } );
+
 		// Ensure the button is visible
-		await expect(button).toBeVisible();
-	  
+		await expect( button ).toBeVisible();
+
 		// Get the initial position
-		const initialPosition = await page.locator(widgetSelector).boundingBox().then(box => box.y);
-	  
+		const initialPosition = await page
+			.locator( widgetSelector )
+			.boundingBox()
+			.then( ( box ) => box.y );
+
 		// Click the button
 		await button.click();
-	  
+
 		// Wait for the movement to complete
-		await page.waitForResponse(response => 
-		  response.url().includes('admin-ajax.php') && response.status() === 200
+		await page.waitForResponse(
+			( response ) =>
+				response.url().includes( 'admin-ajax.php' ) &&
+				response.status() === 200
 		);
-	  
+
 		// Get the new position
-		const newPosition = await page.locator(widgetSelector).boundingBox().then(box => box.y);
-	  
+		const newPosition = await page
+			.locator( widgetSelector )
+			.boundingBox()
+			.then( ( box ) => box.y );
+
 		// Assert based on direction
-		if (direction === 'down') {
-		  expect(newPosition).toBeGreaterThan(initialPosition);
+		if ( direction === 'down' ) {
+			expect( newPosition ).toBeGreaterThan( initialPosition );
 		} else {
-		  expect(newPosition).toBeLessThan(initialPosition);
+			expect( newPosition ).toBeLessThan( initialPosition );
 		}
-	  }
-	  
-  
-  
-  
+	}
+
 	test.beforeEach( async ( { admin } ) => {
 		// Navigate to the admin dashboard
 		await admin.visitAdminPage( '/' );
 	} );
 
-	test( 'Should hide/show widgets using Screen Options', async ( {
-		page,
-	} ) => {
+	test( 'hide/show widgets using Screen Options', async ( { page } ) => {
 		await showScreenOptions( page );
 
 		// Verify if widget is checked in screen option it should be visible
-		await validateWidgetVisibility(
-			page,
-			true
-		);
+		await validateWidgetVisibility( page, true );
 		// Verify if widget is unchecked in screen option it should not be visible
-		await validateWidgetVisibility(
-			page,
-			false
-		);
+		await validateWidgetVisibility( page, false );
 	} );
 
-	test( 'Should move widgets using arrows', async ( { page, admin } ) => {
+	test( 'moves widgets using arrows', async ( { page, admin } ) => {
 		// Ensure all widgets are visible
 		await showScreenOptions( page );
 		await validateWidgetVisibility(
@@ -131,28 +125,17 @@ test.describe( 'Dashboard widget management', () => {
 			'.metabox-prefs-container',
 			true
 		);
-		
-		await moveWidget(
-			page,
-			'down'
-		  );
-		  await moveWidget(
-			page,
-			'up'
-		  );
 
-		 
+		await moveWidget( page, 'down' );
+		await moveWidget( page, 'up' );
 	} );
 
-	test( 'Should collapse and expand widgets', async ( { page, admin } ) => {
-		
+	test( 'collapses and expands widgets', async ( { page, admin } ) => {
 		const widget = page.locator(
 			'div#postbox-container-1 #normal-sortables .postbox:first-of-type'
 		);
 
-		const collapseButton = widget.locator(
-			'button.handlediv'
-		);
+		const collapseButton = widget.locator( 'button.handlediv' );
 		const content = widget.locator( '.inside' );
 
 		// Collapse the widget
