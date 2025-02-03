@@ -2,6 +2,8 @@
  * WordPress dependencies
  */
 const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
+const path = require( 'path' );
+const fs = require( 'fs' );
 
 test.describe( 'Privacy Settings', () => {
 	const postTitle = 'Privacy Policy Test';
@@ -26,8 +28,12 @@ test.describe( 'Privacy Settings', () => {
 			page.locator( "div[class='privacy-settings-title-section'] h1" )
 		).toHaveText( 'Privacy' );
 		await page.locator( '#create-page' ).click();
+		await page.waitForLoadState( 'domcontentloaded' );
+		await editor.setPreferences( 'core/edit-post', {
+			welcomeGuide: false,
+			fullscreenMode: false,
+		} );
 
-        await page.locator('button.components-button.is-small.has-icon:has-text("Close")').click();
 		// Verify the specific text inside the 'Editor content' region
 		const guideText =
 			'Need help putting together your new Privacy Policy page? Check out our guide for';
@@ -36,6 +42,7 @@ test.describe( 'Privacy Settings', () => {
 				.getByRole( 'region', { name: 'Editor content' } )
 				.getByText( guideText )
 		).toBeVisible();
+
 		await page.keyboard.press( 'Escape' );
 		await editor.publishPost();
 		await admin.visitAdminPage( 'options-privacy.php' );
@@ -87,9 +94,29 @@ test.describe( 'Privacy Settings', () => {
 			'.privacy-settings-accordion-trigger:has-text("WordPress")'
 		);
 
-		// Verify the header text in the Privacy Policy Guide section
-		await expect(
-			page.locator( 'text=Privacy Policy Guide' ).first()
-		).toHaveText( 'Privacy Policy Guide' );
+		// Click the copy button after ensuring it's visible
+		const copyButton = page.locator(
+			'div#privacy-settings-accordion-block-wordpress button.privacy-text-copy'
+		);
+		await copyButton.scrollIntoViewIfNeeded();
+		await copyButton.click();
+
+		// Manually trigger a clipboard read event after user interaction
+		await page.waitForTimeout( 1000 ); // Small delay to ensure copy action completes
+		// Get clipboard content
+		const clipboardText = await page.evaluate( async () => {
+			return ( await navigator.clipboard.readText() ).trim();
+		} );
+		console.log( 'clipboard: ' + clipboardText );
+		// Read expected text from a file
+		const expectedTextPath = path.resolve(
+			__dirname,
+			'../../assets/expected_text.txt'
+		);
+		const expectedText = fs
+			.readFileSync( expectedTextPath, 'utf-8' )
+			.trim();
+		// Verify clipboard content matches the expected file content
+		expect( clipboardText.trim() ).toBe( expectedText );
 	} );
 } );
