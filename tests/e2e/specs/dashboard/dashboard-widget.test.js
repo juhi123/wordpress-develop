@@ -108,6 +108,10 @@ test.describe( 'Dashboard widget management', () => {
 		await admin.visitAdminPage( '/' );
 	} );
 
+	test.afterAll( async ( { requestUtils } ) => {
+		// Navigate to the admin dashboard
+		await requestUtils.deleteAllPosts();
+	} );
 	test( 'hide/show widgets using Screen Options', async ( { page } ) => {
 		await showScreenOptions( page );
 
@@ -145,5 +149,33 @@ test.describe( 'Dashboard widget management', () => {
 		// Expand the widget
 		await collapseButton.click();
 		await expect( content ).toBeVisible();
+	} );
+
+	test( 'adds a quick draft in widgets', async ( { page, admin } ) => {
+		// Locate the Quick Draft widget
+		const quickDraftWidget = page.locator( '#dashboard_quick_press' );
+		const collapseButton = quickDraftWidget.locator( 'button.handlediv' );
+		const content = quickDraftWidget.locator( '.inside' );
+
+		// Collapse the Quick Draft widget
+		await collapseButton.click();
+		await expect( content ).not.toBeVisible();
+
+		// Expand the Quick Draft widget
+		await collapseButton.click();
+		await expect( content ).toBeVisible();
+
+		// Add a quick draft
+		const randomString = Math.random().toString( 36 ).substring( 2, 10 );
+		const draftTitle = `Draft Title ${ randomString }`;
+		const draftContent = `Draft Content ${ randomString }`;
+
+		await quickDraftWidget.locator( '#title' ).fill( draftTitle );
+		await quickDraftWidget.locator( '#content' ).fill( draftContent );
+		await quickDraftWidget.locator( '#save-post' ).click();
+
+		// Verify the draft appears in the Recent Drafts section
+		const recentDrafts = page.locator( 'div.drafts div.draft-title' );
+		await expect( recentDrafts ).toContainText( draftTitle );
 	} );
 } );
