@@ -31,6 +31,7 @@ test.describe( 'Assign parent page to child page', () => {
             }
 
         )
+    
 
         await admin.visitAdminPage( 'edit.php', 'post_type=page' );
     } );
@@ -52,31 +53,38 @@ test.describe( 'Assign parent page to child page', () => {
             .getByRole( 'link', { name: `Edit “${childPage}”` } )
             .first()
             .click();
-            // await page.waitForLoadState( 'domcontentloaded' );
+            await page.waitForLoadState( 'domcontentloaded' );
             // await editor.setPreferences( 'core/edit-post', {
             //     preferences: {
             //         features: {
             //     showBlockPatterns: false,
             //         },},
             // } );
-            // await page.focus('.components-modal__header');
-            // await page.keyboard.press('Escape');
+            await page.focus('.components-modal__header');
+            await page.keyboard.press('Escape');
             // await page.locator('button.components-button [aria-label="Close"]').click();
 
       
 // assigning child page to parent page
         
-        await page.locator( 'role=button[name="Page Attributes"i]' ).click();
+        await page.locator( 'button[aria-label="Change parent: None"]' ).click();
 
-        await page.waitForSelector( '#components-form-token-input-0', {
+        await page.waitForSelector( '#components-form-token-input-combobox-control-1', {
             visible: true,
         } );
-        await page.click( 'role=combobox[name="Parent Page:"i]' );
-        await page.fill( 'role=combobox[name="Parent Page:"i]', parentPage );
-        await page.keyboard.press( 'ArrowDown' );
+      // await page.click( 'role=combobox[name="Parent Page:"i]' );
+        await page.fill( '#components-form-token-input-combobox-control-1', parentPage );
         await page.keyboard.press( 'Enter' );
-        await page.locator( 'role=button[name="Update"i]' ).first().click();
+        await page.keyboard.press('Escape');
 
+        await page.focus('.components-modal__header');
+        await page.keyboard.press('Escape');
+
+        const saveButton = page.locator('button.editor-post-publish-button__button:has-text("Save")');
+        await expect(saveButton).toBeEnabled();
+        await saveButton.click();
+        await page.focus('.components-modal__header');
+        await page.keyboard.press('Escape');
         //expect successful update message
         await expect(
             page.locator( '.components-snackbar__content' )
